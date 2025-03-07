@@ -1,0 +1,48 @@
+-- Tabla User
+CREATE TABLE User (
+    username VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    image_url VARCHAR(255),
+    role ENUM('editor', 'reader', 'admin') NOT NULL
+);
+
+-- Tabla Article
+CREATE TABLE Article (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    body TEXT NOT NULL,
+    reported BOOLEAN DEFAULT FALSE,
+    state ENUM('draft', 'definitive') NOT NULL DEFAULT 'draft',
+    publish_date DATETIME DEFAULT NULL,
+    views INT DEFAULT 0,
+    username VARCHAR(50) NOT NULL,
+    FOREIGN KEY (username) REFERENCES User(username) ON DELETE CASCADE
+);
+
+-- Tabla Category
+CREATE TABLE Category (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    description TEXT
+);
+
+-- Tabla intermedia para la relación N:M entre Article y Category
+CREATE TABLE Article_Category (
+    article_id INT,
+    category_id INT,
+    PRIMARY KEY (article_id, category_id),
+    FOREIGN KEY (article_id) REFERENCES Article(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES Category(id) ON DELETE CASCADE
+);
+
+-- Tabla intermedia para la relación N:M entre User y Category (suscripciones)
+CREATE TABLE User_Category (
+    username VARCHAR(50),
+    category_id INT,
+    PRIMARY KEY (username, category_id),
+    FOREIGN KEY (username) REFERENCES User(username) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES Category(id) ON DELETE CASCADE
+);
+
