@@ -1,5 +1,0 @@
-Lo que cada miembro debe hacer una vez en su sistema:
-
-    Configurar core.autocrlf para que Git maneje correctamente los terminadores de línea en su entorno local:
-        En Windows: git config --global core.autocrlf true
-        En Linux/Mac: git config --global core.autocrlf input

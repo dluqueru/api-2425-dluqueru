@@ -5,7 +5,7 @@ CREATE TABLE User (
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     image_url VARCHAR(255),
-    role ENUM('editor', 'reader', 'admin') NOT NULL
+    role ENUM('EDITOR', 'READER', 'ADMIN') NOT NULL
 );
 
 -- Tabla Article
@@ -14,7 +14,7 @@ CREATE TABLE Article (
     title VARCHAR(255) NOT NULL,
     body TEXT NOT NULL,
     reported BOOLEAN DEFAULT FALSE,
-    state ENUM('draft', 'definitive') NOT NULL DEFAULT 'draft',
+    state ENUM('DRAFT', 'DEFINITIVE') NOT NULL DEFAULT 'DRAFT',
     publish_date DATETIME DEFAULT NULL,
     views INT DEFAULT 0,
     username VARCHAR(50) NOT NULL,

@@ -27,11 +27,19 @@ public class CategoryController {
 
     // Obtener categoría por id
     @GetMapping("/category/{id}")
-    public ResponseEntity<?> getCategoryById(@PathVariable Long id) {
+    public ResponseEntity<?> getCategoryById(@PathVariable Integer id) {
         return categoryService.getCategory(id);
     }
 
-    // Crear una nueva categoría TODO No funciona
+    // Crear una nueva categoría
+//	FORMATO PARA AÑADIR    
+//  {
+//	  "id": 6,
+//	  "name": "Prueba",
+//	  "description": "Prueba de prueba",
+//	  "articles": [
+//	  ]
+//	}
     @PostMapping("/category")
     public ResponseEntity<?> addCategory(@RequestBody Category category) {
         return categoryService.addCategory(category);
@@ -39,13 +47,13 @@ public class CategoryController {
 
     // Actualizar una categoría existente TODO No funciona
     @PutMapping("/category/{id}")
-    public ResponseEntity<?> updateCategory(@PathVariable Long id, @RequestBody Category category) {
+    public ResponseEntity<?> updateCategory(@PathVariable Integer id, @RequestBody Category category) {
         return categoryService.updateCategory(id, category);
     }
 
     // Eliminar una categoría
     @DeleteMapping("/category/{id}")
-    public ResponseEntity<?> deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<?> deleteCategory(@PathVariable Integer id) {
         return categoryService.deleteCategory(id);
     }
     

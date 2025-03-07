@@ -1,16 +1,16 @@
 -- Poblar la tabla User
 INSERT INTO User (username, name, email, password, image_url, role) VALUES
-('user1', 'Alice Johnson', 'alice@example.com', 'hashed_password1', 'alice.jpg', 'editor'),
-('user2', 'Bob Smith', 'bob@example.com', 'hashed_password2', 'bob.jpg', 'reader'),
-('user3', 'Charlie Brown', 'charlie@example.com', 'hashed_password3', 'charlie.jpg', 'admin');
+('user1', 'Alice Johnson', 'alice@example.com', 'hashed_password1', 'alice.jpg', 'EDITOR'),
+('user2', 'Bob Smith', 'bob@example.com', 'hashed_password2', 'bob.jpg', 'READER'),
+('user3', 'Charlie Brown', 'charlie@example.com', 'hashed_password3', 'charlie.jpg', 'ADMIN');
 
 -- Poblar la tabla Article
 INSERT INTO Article (title, body, reported, state, publish_date, views, username) VALUES
-('Reseña de The Legend of Zelda', 'Análisis detallado del juego The Legend of Zelda y su impacto en la industria.', FALSE, 'definitive', '2024-02-01 10:00:00', 150, 'user1'),
-('Estrategias en Dark Souls', 'Consejos y trucos para sobrevivir en el desafiante mundo de Dark Souls.', FALSE, 'draft', NULL, 0, 'user1'),
-('La evolución de los eSports', 'Exploramos cómo los deportes electrónicos han cambiado en la última década.', TRUE, 'definitive', '2024-01-20 15:30:00', 220, 'user3'),
-('Guía de inicio en Elden Ring', 'Primeros pasos y recomendaciones para aventureros en Elden Ring.', FALSE, 'definitive', '2024-02-10 12:45:00', 95, 'user1'),
-('Historia de los juegos de pelea', 'Desde Street Fighter hasta Tekken, un recorrido por la historia de los juegos de lucha.', FALSE, 'draft', NULL, 0, 'user3');
+('Reseña de The Legend of Zelda', 'Análisis detallado del juego The Legend of Zelda y su impacto en la industria.', FALSE, 'DEFINITIVE', '2024-02-01 10:00:00', 150, 'user1'),
+('Estrategias en Dark Souls', 'Consejos y trucos para sobrevivir en el desafiante mundo de Dark Souls.', FALSE, 'DRAFT', NULL, 0, 'user1'),
+('La evolución de los eSports', 'Exploramos cómo los deportes electrónicos han cambiado en la última década.', TRUE, 'DEFINITIVE', '2024-01-20 15:30:00', 220, 'user3'),
+('Guía de inicio en Elden Ring', 'Primeros pasos y recomendaciones para aventureros en Elden Ring.', FALSE, 'DEFINITIVE', '2024-02-10 12:45:00', 95, 'user1'),
+('Historia de los juegos de pelea', 'Desde Street Fighter hasta Tekken, un recorrido por la historia de los juegos de lucha.', FALSE, 'DRAFT', NULL, 0, 'user3');
 
 -- Poblar la tabla Category
 INSERT INTO Category (name, description) VALUES

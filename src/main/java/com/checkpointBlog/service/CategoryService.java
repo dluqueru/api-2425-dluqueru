@@ -16,6 +16,8 @@ import com.checkpointBlog.model.Category;
 import com.checkpointBlog.model.CategoryDto;
 import com.checkpointBlog.repository.CategoryRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class CategoryService {
 	
@@ -115,6 +117,7 @@ public class CategoryService {
     }
 
  // Eliminar una categoría
+    @Transactional
     public ResponseEntity<?> deleteCategory(Integer id) {
     	
     	Optional<Category> existingCategoryOpt = categoryRepository.findById(id);

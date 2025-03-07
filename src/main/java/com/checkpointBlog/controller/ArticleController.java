@@ -66,6 +66,30 @@ public class ArticleController {
 	}
 	
 	// Añadir un artículo
+//	FORMATO PARA AÑADIR
+//	{
+//	  "title": "La importancia de la narrativa en los videojuegos",
+//	  "body": "En este artículo analizamos cómo la narrativa en los videojuegos ha evolucionado y su impacto en la experiencia del jugador.",
+//	  "reported": false,
+//	  "state": "DRAFT",
+//	  "publishDate": null,
+//	  "views": 0,
+//	  "user": {
+//	    "username": "user1"
+//	  },
+//	  "articleCategories": [
+//	    {
+//	      "category": {
+//	        "id": 1
+//	      }
+//	    },
+//	    {
+//	      "category": {
+//	        "id": 2
+//	      }
+//	    }
+//	  ]
+//	}
     @PostMapping("/article")
     public ResponseEntity<?> addArticle(@RequestBody Article article) {
         return articleService.addArticle(article);
@@ -77,7 +101,7 @@ public class ArticleController {
         return articleService.updateArticle(id, article);
     }
     
-    // Eliminar un artículo
+    // Eliminar un artículo TODO PROBAR
     @DeleteMapping("/article/{id}")
     public ResponseEntity<?> deleteArticle(@PathVariable Integer id) {
         return articleService.deleteArticle(id);
