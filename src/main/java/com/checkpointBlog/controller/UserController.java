@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.checkpointBlog.exception.BadCredentialException;
 import com.checkpointBlog.model.Credential;
 import com.checkpointBlog.model.User;
-import com.checkpointBlog.secutiry.TokenUtils;
+import com.checkpointBlog.security.TokenUtils;
 import com.checkpointBlog.service.UserService;
 
 @Controller

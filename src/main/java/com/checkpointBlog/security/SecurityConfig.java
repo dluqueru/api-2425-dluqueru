@@ -1,4 +1,4 @@
-package com.checkpointBlog.secutiry;
+package com.checkpointBlog.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

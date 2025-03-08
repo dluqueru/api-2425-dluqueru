@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -62,7 +63,7 @@ public class Article {
     @Schema(description = "Username del usuario que ha creado el artículo", example = "user1")
     private User user;
     
-    @OneToMany(mappedBy="article")
+    @OneToMany(mappedBy="article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArticleCategory> articleCategories;
 
     public Article() {

@@ -2,6 +2,8 @@ package com.checkpointBlog.model;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class ArticleCategoryDto {
 	private Integer articleId;
 	private Integer categoryId;
@@ -12,7 +14,8 @@ public class ArticleCategoryDto {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
     }
-
+    
+    @JsonIgnore
 	public Integer getArticleId() {
 		return articleId;
 	}

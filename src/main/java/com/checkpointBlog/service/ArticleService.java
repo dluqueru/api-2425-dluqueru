@@ -159,72 +159,106 @@ public class ArticleService {
 	    }
 	}
     
-    // Editar un artículo //TODO NO FUNCIONA
-    public ResponseEntity<?> updateArticle(Integer id, Article article) {
-        // Se verifica si el artículo existe
-        Optional<Article> existingArticleOptional = articleRepository.findById(id);
-        if (existingArticleOptional.isEmpty()) {
-            Map<String, String> response = new HashMap<>();
-            response.put("error", "El artículo no existe");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
+    // Editar un artículo
+	@Transactional
+	public ResponseEntity<?> updateArticle(Integer articleId, ArticleDto articleDto) {
+	    try {
+	        // Validaciones
+	        if (articleId == null) {
+	            throw new IllegalArgumentException("El ID del artículo no puede ser nulo");
+	        }
+	        if (articleDto.getUsername() == null) {
+	            throw new IllegalArgumentException("El nombre de usuario no puede ser nulo");
+	        }
+	        if (articleDto.getCategories() == null) {
+	            throw new IllegalArgumentException("La lista de categorías no puede ser nula");
+	        }
 
-        // Se verifica si la categoría existe
-        if (article.getCategory() == null) {
-            Map<String, String> response = new HashMap<>();
-            response.put("error", "Datos inválidos");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
+	        // Se recupera el artículo existente
+	        Article article = articleRepository.findById(articleId)
+	                .orElseThrow(() -> new RuntimeException("Artículo no encontrado"));
 
-        Optional<Category> categoryOptional = categoryRepository.findById(article.getCategory().getId());
-        if (categoryOptional.isEmpty()) {
-            Map<String, String> response = new HashMap<>();
-            response.put("error", "La categoría especificada no existe");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
+	        // Se actualizan las propiedades del artículo
+	        article.setTitle(articleDto.getTitle());
+	        article.setBody(articleDto.getBody());
+	        article.setReported(articleDto.isReported());
+	        article.setState(articleDto.getState());
+	        article.setPublishDate(articleDto.getPublishDate());
+	        article.setViews(articleDto.getViews());
 
-        // Se asigna la categoría encontrada al artículo
-        article.setCategory(categoryOptional.get());
+	        // Se actualiza el usuario
+	        User user = userRepository.findById(articleDto.getUsername())
+	                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+	        article.setUser(user);
 
-        // Se actualiza el artículo existente
-        Article existingArticle = existingArticleOptional.get();
-        existingArticle.setTitle(article.getTitle());
-        existingArticle.setDescription(article.getDescription());
-        existingArticle.setCategory(article.getCategory());
+	        // Se obtienen las categorías actuales del artículo
+	        List<ArticleCategory> currentCategories = new ArrayList<>(article.getArticleCategories());
 
-        try {
-            Article updatedArticle = articleRepository.save(existingArticle);
-            ArticleDto articleDto = new ArticleDto(updatedArticle);
-            return ResponseEntity.status(HttpStatus.OK).body(articleDto);
-        } catch (Exception e) {
-            Map<String, String> response = new HashMap<>();
-            response.put("error", "Error al actualizar el artículo");
-            response.put("message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-    }
-    
+	        // Se mapean las categorías del DTO
+	        List<ArticleCategory> newCategories = articleDto.getCategories().stream()
+	                .map(articleCategoryDto -> {
+	                    Integer categoryId = articleCategoryDto.getCategoryId();
+	                    Category category = categoryRepository.findById(categoryId)
+	                            .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+	                    ArticleCategory articleCategory = new ArticleCategory();
+	                    articleCategory.setArticle(article);
+	                    articleCategory.setCategory(category);
+	                    return articleCategory;
+	                })
+	                .collect(Collectors.toList());
+
+	        // Se eliminan las categorías que ya no están en el DTO
+	        for (ArticleCategory currentCategory : currentCategories) {
+	            if (newCategories.stream().noneMatch(newCategory -> newCategory.getCategory().equals(currentCategory.getCategory()))) {
+	                article.getArticleCategories().remove(currentCategory);  // Elimina la categoría de la colección
+	            }
+	        }
+
+	        // Se agregan las nuevas categorías
+	        for (ArticleCategory newCategory : newCategories) {
+	            if (currentCategories.stream().noneMatch(currentCategory -> currentCategory.getCategory().equals(newCategory.getCategory()))) {
+	                article.getArticleCategories().add(newCategory);  // Agrega la nueva categoría a la colección
+	            }
+	        }
+
+	        // Se guarda el artículo actualizado
+	        Article updatedArticle = articleRepository.save(article);
+
+	        // Devuelve respuesta exitosa
+	        return ResponseEntity.status(HttpStatus.OK).body(new ArticleDto(updatedArticle));
+
+	    } catch (IllegalArgumentException e) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno: " + e.getMessage());
+	    }
+	}
+	
     // Eliminar un artículo
+    @Transactional
     public ResponseEntity<?> deleteArticle(Integer id) {
-        // Se verifica si el artículo existe
         Optional<Article> existingArticleOpt = articleRepository.findById(id);
         if (existingArticleOpt.isEmpty()) {
-            Map<String, String> response = new HashMap<>();
-            response.put("error", "El artículo no existe");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "El artículo no existe"));
         }
 
         try {
-            Article deletedArticle = existingArticleOpt.get();
-            articleRepository.deleteById(id);
-            ArticleDto articleDto = new ArticleDto(deletedArticle);
+            Article articleToDelete = existingArticleOpt.get();
+            ArticleDto articleDto = new ArticleDto(articleToDelete);
+
+            // Se limpia la lista de categorías
+            articleToDelete.getArticleCategories().clear();
+            articleRepository.save(articleToDelete);
+
+            // Se elimina el artículo
+            articleRepository.delete(articleToDelete);
+            
             return ResponseEntity.status(HttpStatus.OK).body(articleDto);
         } catch (Exception e) {
-            Map<String, String> response = new HashMap<>();
-            response.put("error", "Error al eliminar el artículo");
-            response.put("message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                "error", "Error al eliminar el artículo",
+                "message", e.getMessage()
+            ));
         }
     }
-	
 }

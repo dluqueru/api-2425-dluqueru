@@ -16,6 +16,7 @@ import com.checkpointBlog.model.Category;
 import com.checkpointBlog.model.CategoryDto;
 import com.checkpointBlog.repository.CategoryRepository;
 
+import io.jsonwebtoken.lang.Collections;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -88,9 +89,8 @@ public class CategoryService {
     
     // Editar una categoría
     public ResponseEntity<?> updateCategory(Integer id, Category category) {
-        
-    	Optional<Category> existingCategoryOptional = categoryRepository.findById(id);
-        
+        Optional<Category> existingCategoryOptional = categoryRepository.findById(id);
+
         // Se verifica si la categoría existe
         if (existingCategoryOptional.isEmpty()) {
             Map<String, String> response = new HashMap<>();
@@ -98,15 +98,25 @@ public class CategoryService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
-        // Se actualiza la categoría existente
+        // Se obtiene la categoría existente
         Category existingCategory = existingCategoryOptional.get();
+        
+        // Se actualizan los datos
         existingCategory.setName(category.getName());
         existingCategory.setDescription(category.getDescription());
-        existingCategory.setArticleList(category.getArticleList());
+
+        if (category.getArticleCategories() != null) {
+            existingCategory.setArticleCategories(category.getArticleCategories());
+        } else {
+            existingCategory.setArticleCategories(Collections.emptyList());
+        }
 
         try {
-        	Category updatedCategory = categoryRepository.save(existingCategory);
-        	CategoryDto categoryDto = new CategoryDto(updatedCategory);
+            // Se guarda la categoría actualizada
+            Category updatedCategory = categoryRepository.save(existingCategory);
+            
+            // Se devuelve la categoría en formato DTO
+            CategoryDto categoryDto = new CategoryDto(updatedCategory);
             return ResponseEntity.status(HttpStatus.OK).body(categoryDto);
         } catch (Exception e) {
             Map<String, String> response = new HashMap<>();

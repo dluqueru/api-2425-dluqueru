@@ -1,11 +1,14 @@
 package com.checkpointBlog.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -16,6 +19,7 @@ import jakarta.persistence.Table;
 public class Category {
 		
 		@Id
+		@GeneratedValue(strategy = GenerationType.IDENTITY)
 		@Column(name="id")
 		@Schema(description = "ID de la categoría", example = "1")
 		private Integer id;
@@ -29,7 +33,7 @@ public class Category {
 		private String description;
 		
 		@OneToMany(mappedBy="category")
-	    private List<ArticleCategory> articleCategories;
+	    private List<ArticleCategory> articleCategories = new ArrayList<ArticleCategory>();
 		
 		public Category() {
 			super();

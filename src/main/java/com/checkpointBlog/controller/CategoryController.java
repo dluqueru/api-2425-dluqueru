@@ -34,18 +34,20 @@ public class CategoryController {
     // Crear una nueva categoría
 //	FORMATO PARA AÑADIR    
 //  {
-//	  "id": 6,
 //	  "name": "Prueba",
-//	  "description": "Prueba de prueba",
-//	  "articles": [
-//	  ]
+//	  "description": "Prueba de prueba"
 //	}
     @PostMapping("/category")
     public ResponseEntity<?> addCategory(@RequestBody Category category) {
         return categoryService.addCategory(category);
     }
 
-    // Actualizar una categoría existente TODO No funciona
+    // Actualizar una categoría existente
+//	FORMATO PARA EDITAR    
+//  {
+//	  "name": "Prueba",
+//	  "description": "Prueba de prueba"
+//	}
     @PutMapping("/category/{id}")
     public ResponseEntity<?> updateCategory(@PathVariable Integer id, @RequestBody Category category) {
         return categoryService.updateCategory(id, category);

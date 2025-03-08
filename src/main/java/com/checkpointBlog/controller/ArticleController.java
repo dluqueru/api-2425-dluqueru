@@ -1,6 +1,7 @@
 package com.checkpointBlog.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.checkpointBlog.exception.ElementNotFoundException;
 import com.checkpointBlog.model.Article;
-import com.checkpointBlog.secutiry.TokenUtils;
+import com.checkpointBlog.model.ArticleDto;
+import com.checkpointBlog.security.TokenUtils;
 import com.checkpointBlog.service.ArticleService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -96,9 +98,30 @@ public class ArticleController {
     }
     
     // Editar un artículo
+//	FORMATO PARA AÑADIR
+//    {
+//	  "id": 20,
+//	  "title": "Vamos allá",
+//	  "body": "En este artículo analizamos cómo la narrativa en los videojuegos ha evolucionado y su impacto en la experiencia del jugador.",
+//	  "reported": false,
+//	  "state": "DRAFT",
+//	  "publishDate": null,
+//	  "views": 0,
+//	  "username": "user1",
+//	  "categories": [
+//	    {
+//	      "categoryId": 3,
+//	      "categoryName": "eSports"
+//	    },
+//	    {
+//	      "categoryId": 4,
+//	      "categoryName": "RPG"
+//	    }
+//	  ]
+//	}
     @PutMapping("/article/{id}")
-    public ResponseEntity<?> updateArticle(@PathVariable Integer id, @RequestBody Article article) {
-        return articleService.updateArticle(id, article);
+    public ResponseEntity<?> updateArticle(@PathVariable Integer id, @RequestBody ArticleDto articleDto) {
+        return articleService.updateArticle(id, articleDto);
     }
     
     // Eliminar un artículo TODO PROBAR

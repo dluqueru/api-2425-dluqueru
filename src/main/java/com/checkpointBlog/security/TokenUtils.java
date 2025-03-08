@@ -1,4 +1,4 @@
-package com.checkpointBlog.secutiry;
+package com.checkpointBlog.security;
 
 import java.util.ArrayList;
 import java.util.Date;
