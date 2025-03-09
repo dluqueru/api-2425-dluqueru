@@ -1,5 +1,6 @@
 -- Poblar la tabla User
 INSERT INTO User (username, name, email, password, image_url, role) VALUES
+('admin', 'admin', 'admin@admin.com', '$2a$10$GSFA2zAdfNn2PEAKseR2W.QLW55xunV.VWwmWWejWlUd23Psf.Z2W', null, 'ADMIN'),
 ('user1', 'Alice Johnson', 'alice@example.com', 'hashed_password1', 'alice.jpg', 'EDITOR'),
 ('user2', 'Bob Smith', 'bob@example.com', 'hashed_password2', 'bob.jpg', 'READER'),
 ('user3', 'Charlie Brown', 'charlie@example.com', 'hashed_password3', 'charlie.jpg', 'ADMIN');

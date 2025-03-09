@@ -19,7 +19,7 @@ public class CategoryController {
 	@Autowired
 	private CategoryService categoryService;
 	
-	 // Lista de categorías
+	// Lista de categorías
     @GetMapping("/category")
     public ResponseEntity<?> getCategories() {
         return categoryService.getCategories();

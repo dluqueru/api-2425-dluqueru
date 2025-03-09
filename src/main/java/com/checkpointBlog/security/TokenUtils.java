@@ -32,7 +32,7 @@ public class TokenUtils {
 		
 		payLoad.put("username", username);
 		payLoad.put("email", email);
-		payLoad.put("role", role);
+		payLoad.put("role", role.toString());
 		
 		String token = Jwts.builder()
 							.subject(username)

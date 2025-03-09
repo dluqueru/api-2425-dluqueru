@@ -50,9 +50,15 @@ public class SecurityConfig {
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.authorizeHttpRequests((requests) -> {
 			requests
-//				.requestMatchers("/login").permitAll()
-//				.requestMatchers("/article").authenticated()
-				.anyRequest().permitAll();
+				.requestMatchers("/login").permitAll()
+				.requestMatchers("/register").permitAll()
+				.requestMatchers("/article").authenticated()
+				.requestMatchers("/category").authenticated()
+				.requestMatchers("/article/**").authenticated()
+				.requestMatchers("/category/**").authenticated()
+				.requestMatchers("/user").authenticated()
+				.requestMatchers("/user/**").authenticated()
+				.anyRequest().denyAll();
 		});
 		
 		http.csrf(csrf->csrf.disable())

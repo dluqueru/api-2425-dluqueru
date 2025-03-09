@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.checkpointBlog.exception.ElementNotFoundException;
 import com.checkpointBlog.model.Article;
 import com.checkpointBlog.model.ArticleDto;
+import com.checkpointBlog.model.Role;
 import com.checkpointBlog.security.TokenUtils;
 import com.checkpointBlog.service.ArticleService;
 
@@ -29,12 +30,6 @@ public class ArticleController {
 
 	@Autowired
 	private ArticleService articleService;
-	
-//	@GetMapping("/login")
-//	public ResponseEntity<?> getToken(){
-//		String token = TokenUtils.generateToken("daniel", "daniel@gmail.com", "user");
-//		return ResponseEntity.ok(token);
-//	}
 	
 	// Lista de artículos
 	@GetMapping("/article")
@@ -98,7 +93,7 @@ public class ArticleController {
     }
     
     // Editar un artículo
-//	FORMATO PARA AÑADIR
+//	FORMATO PARA EDITAR
 //    {
 //	  "id": 20,
 //	  "title": "Vamos allá",
@@ -124,7 +119,7 @@ public class ArticleController {
         return articleService.updateArticle(id, articleDto);
     }
     
-    // Eliminar un artículo TODO PROBAR
+    // Eliminar un artículo
     @DeleteMapping("/article/{id}")
     public ResponseEntity<?> deleteArticle(@PathVariable Integer id) {
         return articleService.deleteArticle(id);

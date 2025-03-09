@@ -37,6 +37,9 @@ public class ArticleService {
 	private UserRepository userRepository;
 	
 	@Autowired
+	private UserService userService;
+	
+	@Autowired
 	private ArticleCategoryRepository articleCategoryRepository;
 	
 	// Lista de artículos
@@ -177,6 +180,12 @@ public class ArticleService {
 	        // Se recupera el artículo existente
 	        Article article = articleRepository.findById(articleId)
 	                .orElseThrow(() -> new RuntimeException("Artículo no encontrado"));
+	        
+	        // Se verifica si el usuario que está borrando tiene el rol de ADMIN o es el que creó el artículo
+	        if (!userService.getLoggedUsername().equals(article.getUser().getUsername()) && !userService.hasAdminRole()) {
+	            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+	                    .body(Map.of("error", "Sólo un admin o el mismo usuario puede actualizar este artículo"));
+	        }
 
 	        // Se actualizan las propiedades del artículo
 	        article.setTitle(articleDto.getTitle());
@@ -210,17 +219,17 @@ public class ArticleService {
 	        // Se eliminan las categorías que ya no están en el DTO
 	        for (ArticleCategory currentCategory : currentCategories) {
 	            if (newCategories.stream().noneMatch(newCategory -> newCategory.getCategory().equals(currentCategory.getCategory()))) {
-	                article.getArticleCategories().remove(currentCategory);  // Elimina la categoría de la colección
+	                article.getArticleCategories().remove(currentCategory);
 	            }
 	        }
 
 	        // Se agregan las nuevas categorías
 	        for (ArticleCategory newCategory : newCategories) {
 	            if (currentCategories.stream().noneMatch(currentCategory -> currentCategory.getCategory().equals(newCategory.getCategory()))) {
-	                article.getArticleCategories().add(newCategory);  // Agrega la nueva categoría a la colección
+	                article.getArticleCategories().add(newCategory);
 	            }
 	        }
-
+	        
 	        // Se guarda el artículo actualizado
 	        Article updatedArticle = articleRepository.save(article);
 
@@ -238,6 +247,13 @@ public class ArticleService {
     @Transactional
     public ResponseEntity<?> deleteArticle(Integer id) {
         Optional<Article> existingArticleOpt = articleRepository.findById(id);
+        
+    	// Se verifica si el usuario que está borrando tiene el rol de ADMIN o es el que creó el artículo
+        if (!userService.getLoggedUsername().equals(existingArticleOpt.get().getUser().getUsername()) && !userService.hasAdminRole()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Sólo un admin o el mismo usuario puede borrar este artículo"));
+        }
+        
         if (existingArticleOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "El artículo no existe"));
         }
