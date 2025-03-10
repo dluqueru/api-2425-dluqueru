@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
@@ -50,8 +52,9 @@ public class Article {
     private State state;
 
     @Column(name = "publish_date")
-    @Schema(description = "Fecha de publicación del artículo", example = "2024-02-01T10:00:00")
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
+    @Schema(description = "Fecha de publicación del artículo", example = "2024-02-01 10:00:00")
+    @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd HH:mm:ss")
     private LocalDateTime publishDate;
 
     @Column(name = "views", nullable = false)

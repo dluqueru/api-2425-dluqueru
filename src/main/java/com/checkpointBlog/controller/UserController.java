@@ -54,11 +54,15 @@ public class UserController {
 //	}
 	public ResponseEntity<?> addUser(@Validated @RequestBody User user, BindingResult bindingResult) {
 	    if (bindingResult.hasErrors()) {
-	        return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+	    	Map<String, String> response = new HashMap<>();
+			response.put("errorMessage", bindingResult.getAllErrors().toString());
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 	    }
 
-	    if (userService.existsByUsername(user.getUsername())) {
-	        return ResponseEntity.status(HttpStatus.CONFLICT).body("El usuario ya existe");
+	    if (userService.existsByUsername(user.getUsername()) || userService.existsByEmail(user.getEmail())) {
+	    	Map<String, String> response = new HashMap<>();
+			response.put("errorMessage", "El usuario ya existe");
+	        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
 	    }
 
 	    User newUser = new User();

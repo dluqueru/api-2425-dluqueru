@@ -69,7 +69,8 @@ public class UserService implements UserDetailsService{
 			
 			return ResponseEntity.status(210).body(response);
 		} else {
-			return ResponseEntity.status(HttpStatus.OK).body(list);
+			List<UserDto> dtoList = list.stream().map(user -> new UserDto(user)).toList();
+			return ResponseEntity.status(HttpStatus.OK).body(dtoList);
 		}
 	}
 
@@ -91,8 +92,8 @@ public class UserService implements UserDetailsService{
 			response.put("errorMessage", "El usuario no existe");
 			return ResponseEntity.status(404).body(response);
 		}
-		
-		return ResponseEntity.status(200).body(u);
+		UserDto userDto = new UserDto(u);
+		return ResponseEntity.status(200).body(userDto);
 		
 	}
 
@@ -202,6 +203,10 @@ public class UserService implements UserDetailsService{
                     .body(Map.of("error", "Error al actualizar el usuario", "message", e.getMessage()));
         }
     }
+
+	public boolean existsByEmail(String email) {
+		return userRepository.existsByEmail(email);
+	}
 
 	
 }
