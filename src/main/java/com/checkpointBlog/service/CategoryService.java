@@ -81,7 +81,7 @@ public class CategoryService {
             return ResponseEntity.status(HttpStatus.CREATED).body(categoryDto);
         } catch (Exception e) {
             Map<String, String> response = new HashMap<>();
-            response.put("error", "Error al añadir el artículo");
+            response.put("error", "Error al añadir la categoría");
             response.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }

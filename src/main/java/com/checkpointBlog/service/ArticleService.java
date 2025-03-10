@@ -102,14 +102,18 @@ public class ArticleService {
 	public ResponseEntity<?> addArticle(Article article) {
 	    // Se verifica que el artículo no esté vacío
 	    if (article.getTitle() == null || article.getBody() == null) {
+	    	Map<String, String> response = new HashMap<>();
+			response.put("error", "El título y el cuerpo son obligatorios");
 	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-	                .body("El título y el cuerpo son obligatorios");
+	                .body(response);
 	    }
 
 	    // Se verifica que las categorías sean válidas
 	    if (article.getArticleCategories() == null || article.getArticleCategories().isEmpty()) {
+	    	Map<String, String> response = new HashMap<>();
+			response.put("error", "El artículo debe tener al menos una categoría");
 	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-	                .body("El artículo debe tener al menos una categoría");
+	                .body(response);
 	    }
 
 	    // Se buscan las categorías por sus IDs
@@ -120,8 +124,10 @@ public class ArticleService {
 	    );
 
 	    if (categories.size() != article.getArticleCategories().size()) {
+	    	Map<String, String> response = new HashMap<>();
+			response.put("error", "Algunas categorías no existen");
 	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-	                .body("Algunas categorías no existen");
+	                .body(response);
 	    }
 
 	    // Se asignan las categorías encontradas al artículo
@@ -140,8 +146,10 @@ public class ArticleService {
 	    String username = article.getUser().getUsername();
 	    Optional<User> userOptional = userRepository.findById(username);
 	    if (userOptional.isEmpty()) {
+	    	Map<String, String> response = new HashMap<>();
+			response.put("error", "Usuario no encontrado con el username " + username);
 	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-	                .body("Usuario no encontrado con el username: " + username);
+	                .body(response);
 	    }
 
 	    // Se asigna el usuario encontrado al artículo
@@ -157,8 +165,10 @@ public class ArticleService {
 	        return ResponseEntity.status(HttpStatus.CREATED)
 	                .body(new ArticleDto(savedArticle));
 	    } catch (Exception e) {
+	    	Map<String, String> response = new HashMap<>();
+			response.put("error", "Error añadiendo el artículo");
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                .body("Error al guardar el artículo");
+	                .body(response);
 	    }
 	}
     
