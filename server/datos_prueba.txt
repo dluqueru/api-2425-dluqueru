@@ -1,9 +1,15 @@
 -- Poblar la tabla User
-INSERT INTO User (username, name, email, password, image_url, role) VALUES
-('admin', 'admin', 'admin@admin.com', '$2a$10$GSFA2zAdfNn2PEAKseR2W.QLW55xunV.VWwmWWejWlUd23Psf.Z2W', null, 'ADMIN'),
-('user1', 'Alice Johnson', 'alice@example.com', 'hashed_password1', 'alice.jpg', 'EDITOR'),
-('user2', 'Bob Smith', 'bob@example.com', 'hashed_password2', 'bob.jpg', 'READER'),
-('user3', 'Charlie Brown', 'charlie@example.com', 'hashed_password3', 'charlie.jpg', 'ADMIN');
+INSERT INTO User (username, name, email, password, image_url, role, reputation) VALUES
+('admin', 'admin', 'admin@admin.com', '$2a$10$GSFA2zAdfNn2PEAKseR2W.QLW55xunV.VWwmWWejWlUd23Psf.Z2W', null, 'ADMIN', 100),
+('user1', 'Alice Johnson', 'alice@example.com', 'hashed_password1', 'alice.jpg', 'EDITOR', 50),
+('user2', 'Bob Smith', 'bob@example.com', 'hashed_password2', 'bob.jpg', 'READER', 20),
+('user3', 'Charlie Brown', 'charlie@example.com', 'hashed_password3', 'charlie.jpg', 'ADMIN', 75);
+
+-- Poblar la tabla de suscripciones entre usuarios
+INSERT INTO User_Subscription (subscriber, subscribed_to) VALUES
+('user1', 'user2'),
+('user2', 'user1'),
+('user3', 'user1');
 
 -- Poblar la tabla Article
 INSERT INTO Article (title, body, reported, state, publish_date, views, username) VALUES
@@ -37,3 +43,30 @@ INSERT INTO User_Category (username, category_id) VALUES
 ('user1', 4),
 ('user3', 5);
 
+-- Poblar la tabla Comment
+INSERT INTO Comment (comment, article_id, user_id, creation_date, reported) VALUES
+('Gran artículo, muy detallado.', 1, 'user2', '2024-02-02 08:00:00', FALSE),
+('No estoy de acuerdo con algunos puntos.', 3, 'user1', '2024-01-22 14:30:00', TRUE),
+('Muy útil para principiantes.', 4, 'user3', '2024-02-11 16:00:00', FALSE);
+
+-- Poblar la tabla Image
+INSERT INTO Image (image, article_id) VALUES
+('zelda_review.jpg', 1),
+('dark_souls_tips.jpg', 2),
+('esports_history.jpg', 3);
+
+-- Poblar la tabla Tag
+INSERT INTO Tag (tag) VALUES
+('Nintendo'),
+('RPG'),
+('Estrategia'),
+('eSports'),
+('Peleas');
+
+-- Poblar la tabla intermedia Article_Tag
+INSERT INTO Article_Tag (article_id, tag_id) VALUES
+(1, 1),
+(2, 2),
+(3, 4),
+(4, 2),
+(5, 5);

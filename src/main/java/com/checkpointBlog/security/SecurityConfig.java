@@ -1,5 +1,7 @@
 package com.checkpointBlog.security;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,63 +14,74 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import com.checkpointBlog.service.UserService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-	
-	@Autowired
-	RequestFilter requestFilter;
 
-	@Bean
-	UserService userDetailsService() {
-		return new UserService();
-	}
-	
-	@Bean
-	BCryptPasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-	
-	@Bean
-	DaoAuthenticationProvider authenticationProvider() {
-		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-		authProvider.setUserDetailsService(userDetailsService());
-		authProvider.setPasswordEncoder(passwordEncoder());
-		
-		return authProvider;
-	}
-	
-	@Bean
-	AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception{
-		return authConfig.getAuthenticationManager();
-	}
-	
-	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.authorizeHttpRequests((requests) -> {
-			requests
-				.requestMatchers("/login").permitAll()
-				.requestMatchers("/register").permitAll()
-				.requestMatchers("/swagger-ui/**").permitAll()
-				.requestMatchers("/v3/api-docs/**").permitAll()
-				.requestMatchers("/article").authenticated()
-				.requestMatchers("/category").authenticated()
-				.requestMatchers("/article/**").authenticated()
-				.requestMatchers("/category/**").authenticated()
-				.requestMatchers("/user").authenticated()
-				.requestMatchers("/user/**").authenticated()
-				.anyRequest().denyAll();
-		});
-		
-		http.csrf(csrf->csrf.disable())
-			.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-		
-		http.addFilterBefore(requestFilter, UsernamePasswordAuthenticationFilter.class);
-		
-		return http.build();
-	}
-	
+    @Autowired
+    RequestFilter requestFilter;
+
+    @Bean
+    UserService userDetailsService() {
+        return new UserService();
+    }
+
+    @Bean
+    BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+
+    @Bean
+    AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
+
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Agrega configuración de CORS
+            .authorizeHttpRequests(requests -> requests
+                .requestMatchers("/login", "/register", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .requestMatchers("/article", "/category", "/article/**", "/category/**", "/user", "/user/**").authenticated()
+                .anyRequest().denyAll()
+            )
+            .csrf(csrf -> csrf.disable()) // Deshabilita CSRF porque usas JWT (recomendado en APIs)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .addFilterBefore(requestFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:4200")); // Permitir Angular en desarrollo
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        config.setAllowCredentials(true); // Permitir autenticación con credenciales
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
+    @Bean
+    CorsFilter corsFilter() {
+        return new CorsFilter(corsConfigurationSource());
+    }
 }
