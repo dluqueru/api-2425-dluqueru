@@ -4,9 +4,10 @@ public class UserDto {
     private String username;
     private String name;
     private String email;
+    private String photo;
     private Role role;
 
-    public UserDto(String username, String name, String email, Role role) {
+    public UserDto(String username, String name, String email, String photo, Role role) {
         this.username = username;
         this.name = name;
         this.email = email;
@@ -17,6 +18,7 @@ public class UserDto {
         this.username = user.getUsername();
         this.name = user.getName();
         this.email = user.getEmail();
+        this.photo = user.getPhoto();
         this.role = user.getRole();
     }
 
@@ -42,6 +44,14 @@ public class UserDto {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+    
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
     public Role getRole() {

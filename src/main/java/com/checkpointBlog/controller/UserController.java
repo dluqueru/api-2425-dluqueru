@@ -76,7 +76,7 @@ public class UserController {
 
 	    newUser = userService.save(newUser);
 
-	    UserDto responseUser = new UserDto(newUser.getUsername(), newUser.getName(), newUser.getEmail(), newUser.getRole());
+	    UserDto responseUser = new UserDto(newUser.getUsername(), newUser.getName(), newUser.getEmail(), newUser.getPhoto(), newUser.getRole());
 
 	    return ResponseEntity.ok(responseUser);
 	}

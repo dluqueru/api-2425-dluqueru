@@ -195,6 +195,7 @@ public class UserService implements UserDetailsService{
                     existingUser.getUsername(), 
                     existingUser.getName(), 
                     existingUser.getEmail(), 
+                    existingUser.getPhoto(),
                     existingUser.getRole()
             );
             return ResponseEntity.ok(responseUser);
