@@ -21,16 +21,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.checkpointBlog.exception.BadCredentialException;
-import com.checkpointBlog.model.Category;
 import com.checkpointBlog.model.Credential;
 import com.checkpointBlog.model.Role;
 import com.checkpointBlog.model.User;
 import com.checkpointBlog.model.UserDto;
 import com.checkpointBlog.security.TokenUtils;
 import com.checkpointBlog.service.UserService;
-
-import jakarta.validation.Valid;
 
 @Controller
 public class UserController {
@@ -59,6 +55,12 @@ public class UserController {
 			response.put("errorMessage", bindingResult.getAllErrors().toString());
 	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 	    }
+	    
+	    if (!isValidPassword(user.getPassword())) {
+	        Map<String, String> response = new HashMap<>();
+	        response.put("errorMessage", "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.");
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+	    }
 
 	    if (userService.existsByUsername(user.getUsername()) || userService.existsByEmail(user.getEmail())) {
 	    	Map<String, String> response = new HashMap<>();
@@ -79,6 +81,13 @@ public class UserController {
 	    UserDto responseUser = new UserDto(newUser.getUsername(), newUser.getName(), newUser.getEmail(), newUser.getPhoto(), newUser.getRole());
 
 	    return ResponseEntity.ok(responseUser);
+	}
+	
+	private boolean isValidPassword(String password) {
+	    if (password == null) return false;
+
+	    String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&.])[A-Za-z\\d@$!%*?&.]{8,}$";
+	    return password.matches(passwordRegex);
 	}
 	
 	// Login de usuario
