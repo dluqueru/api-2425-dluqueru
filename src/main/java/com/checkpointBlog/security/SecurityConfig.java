@@ -54,13 +54,13 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Agrega configuración de CORS
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(requests -> requests
-                .requestMatchers("/login", "/register", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers("/article", "/category", "/article/**", "/category/**", "/user", "/user/**").authenticated()
+                .requestMatchers("/login", "/register", "/article", "/user", "/user/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .requestMatchers("/category", "/article/**", "/category/**").authenticated()
                 .anyRequest().denyAll()
             )
-            .csrf(csrf -> csrf.disable()) // Deshabilita CSRF porque usas JWT (recomendado en APIs)
+            .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .addFilterBefore(requestFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -70,10 +70,10 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:4200")); // Permitir Angular en desarrollo
+        config.setAllowedOrigins(List.of("http://localhost:4200"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-        config.setAllowCredentials(true); // Permitir autenticación con credenciales
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
