@@ -90,3 +90,14 @@ CREATE TABLE Article_Tag (
     FOREIGN KEY (article_id) REFERENCES Article(id) ON DELETE CASCADE,
     FOREIGN KEY (tag_id) REFERENCES Tag(id) ON DELETE CASCADE
 );
+
+-- Tabla intermedia para "me gusta"
+CREATE TABLE Likes (
+  id            INT PRIMARY KEY AUTO_INCREMENT,
+  user_username VARCHAR(255) NOT NULL,
+  article_id    INT NOT NULL,
+  created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(user_username, article_id),
+  FOREIGN KEY (user_username) REFERENCES User(username),
+  FOREIGN KEY (article_id) REFERENCES Article(id)
+);
