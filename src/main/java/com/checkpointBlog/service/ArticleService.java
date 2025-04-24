@@ -92,6 +92,10 @@ public class ArticleService {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 		}
 		
+		// Se incrementan las views cada vez que se accede al artículo
+		a.incrementViews();
+        articleRepository.save(a);
+		
 		ArticleDto res = new ArticleDto(a);
 		
 		return ResponseEntity.status(200).body(res);

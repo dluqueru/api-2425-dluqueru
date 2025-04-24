@@ -146,6 +146,10 @@ public class Article {
 	public void setArticleCategories(List<ArticleCategory> articleCategories) {
 		this.articleCategories = articleCategories;
 	}
+	
+    public void incrementViews() {
+        this.views++;
+    }
 
 	@Override
     public int hashCode() {

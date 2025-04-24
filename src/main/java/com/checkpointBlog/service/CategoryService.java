@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.checkpointBlog.model.Article;
-import com.checkpointBlog.model.ArticleDto;
 import com.checkpointBlog.model.Category;
 import com.checkpointBlog.model.CategoryDto;
 import com.checkpointBlog.repository.CategoryRepository;
