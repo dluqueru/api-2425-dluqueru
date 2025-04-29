@@ -69,12 +69,25 @@ CREATE TABLE Comment (
 );
 
 -- Tabla Image
-CREATE TABLE Image (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    image VARCHAR(255) NOT NULL,
-    article_id INT NOT NULL,
-    FOREIGN KEY (article_id) REFERENCES Article(id) ON DELETE CASCADE
-);
+CREATE TABLE `Image` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `image_url` VARCHAR(512) NOT NULL,
+  `public_id` VARCHAR(255) NOT NULL,
+  `asset_id` VARCHAR(255) ,
+  `format` VARCHAR(10) ,
+  `article_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_IMAGE_PUBLIC_ID` (`public_id`),
+  CONSTRAINT `FK_IMAGE_ARTICLE` 
+    FOREIGN KEY (`article_id`) 
+    REFERENCES `Article` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Índices para mejorar el rendimiento de consultas comunes
+CREATE INDEX `IDX_IMAGE_ARTICLE` ON `Image` (`article_id`);
+CREATE INDEX `IDX_IMAGE_FORMAT` ON `Image` (`format`);
 
 -- Tabla Tag
 CREATE TABLE Tag (
