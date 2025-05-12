@@ -1,7 +1,6 @@
 package com.checkpointBlog.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.checkpointBlog.exception.ElementNotFoundException;
 import com.checkpointBlog.model.Article;
 import com.checkpointBlog.model.ArticleDto;
-import com.checkpointBlog.model.Role;
-import com.checkpointBlog.security.TokenUtils;
 import com.checkpointBlog.service.ArticleService;
 
 import io.swagger.v3.oas.annotations.Operation;

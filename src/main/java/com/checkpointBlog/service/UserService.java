@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.checkpointBlog.exception.NotFoundException;
 import com.checkpointBlog.model.User;
 import com.checkpointBlog.model.UserDto;
 import com.checkpointBlog.repository.UserRepository;
@@ -41,7 +42,6 @@ public class UserService implements UserDetailsService{
 		} else {
 			return user;
 		}
-
 	}
 
 	public User save(User user) {
@@ -209,5 +209,61 @@ public class UserService implements UserDetailsService{
 		return userRepository.existsByEmail(email);
 	}
 
-	
+	public ResponseEntity<?> updateUserProfileImage(String username, String imageUrl, String publicId) {
+	    try {
+	        User user = userRepository.findByUsername(username)
+	            .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
+	        
+	        user.setPhoto(imageUrl);
+	        user.setPhotoPublicId(publicId);
+	        userRepository.save(user);
+	        
+	        Map<String, String> response = new HashMap<>();
+	        response.put("imageUrl", imageUrl);
+	        response.put("publicId", publicId);
+	        
+	        return ResponseEntity.ok(response);
+	    } catch (NotFoundException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	            .body("Error al actualizar la imagen de perfil");
+	    }
+	}
+
+	public ResponseEntity<?> getUserProfileImageInfo(String username) {
+	    try {
+	        User user = userRepository.findByUsername(username)
+	            .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
+	        
+	        Map<String, String> response = new HashMap<>();
+	        response.put("imageUrl", user.getPhoto());
+	        response.put("publicId", user.getPhotoPublicId());
+	        
+	        return ResponseEntity.ok(response);
+	    } catch (NotFoundException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	            .body("Error al obtener la imagen de perfil");
+	    }
+	}
+
+	public ResponseEntity<?> createOrUpdateUserProfileImage(String username, String imageUrl, String publicId) {
+	    User user = userRepository.findByUsername(username)
+	        .orElse(new User());
+	    
+	    user.setUsername(username);
+	    user.setPhoto(imageUrl);
+	    user.setPhotoPublicId(publicId);
+	    
+	    user = userRepository.save(user);
+	    
+	    Map<String, String> response = new HashMap<>();
+	    response.put("imageUrl", imageUrl);
+	    response.put("publicId", publicId);
+	    response.put("username", username);
+	    
+	    return ResponseEntity.ok(response);
+	}
 }

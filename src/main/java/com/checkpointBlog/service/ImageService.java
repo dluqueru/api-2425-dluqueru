@@ -80,9 +80,9 @@ public class ImageService {
     }
 
     @Transactional
-    public ResponseEntity<?> deleteImage(Integer imageId) {
+    public ResponseEntity<?> deleteImage(String publicId) {
         try {
-            Image image = imageRepository.findById(imageId)
+            Image image = imageRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new NotFoundException("Imagen no encontrada"));
             
             cloudinaryService.deleteImage(image.getPublicId());
@@ -114,5 +114,38 @@ public class ImageService {
         response.put("error", error);
         response.put("message", e.getMessage());
         return ResponseEntity.status(status).body(response);
+    }
+    
+    public ResponseEntity<?> uploadAndSaveProfileImage(MultipartFile file) {
+        try {
+            Map<?, ?> uploadResult = cloudinaryService.uploadFile(file);
+
+            if (!uploadResult.containsKey("secure_url") || !uploadResult.containsKey("public_id")) {
+                System.err.println("Cloudinary no devolvió los campos esperados. Campos recibidos: " + 
+                    uploadResult.keySet());
+            }
+            
+            Map<String, String> response = new HashMap<>();
+            response.put("secure_url", uploadResult.get("secure_url").toString());
+            response.put("public_id", uploadResult.get("public_id").toString());
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            System.err.println("Error en ImageService: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error al subir la imagen: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public ResponseEntity<?> deleteProfileImage(String publicId) {
+        try {
+            cloudinaryService.deleteImage(publicId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, 
+                                   "Error al eliminar la imagen de perfil", e);
+        }
     }
 }

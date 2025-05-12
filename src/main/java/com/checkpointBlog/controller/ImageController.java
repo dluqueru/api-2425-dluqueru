@@ -71,7 +71,7 @@ public class ImageController {
     })
     public ResponseEntity<?> deleteImage(
             @Parameter(description = "ID de la imagen", required = true)
-            @PathVariable Integer imageId) {
+            @PathVariable String imageId) {
         return imageService.deleteImage(imageId);
     }
 }

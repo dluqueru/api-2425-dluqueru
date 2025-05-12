@@ -9,8 +9,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -41,10 +39,12 @@ public class User implements UserDetails{
 	@Column(name="image_url")
 	private String photo;
 	
+	@Column(name="image_public_id")
+	private String photoPublicId;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name="role")
 	private Role role;
-
 
 	public User() {
 		super();
@@ -98,6 +98,16 @@ public class User implements UserDetails{
 
 	public void setPhoto(String photo) {
 		this.photo = photo;
+	}
+
+
+	public String getPhotoPublicId() {
+		return photoPublicId;
+	}
+
+
+	public void setPhotoPublicId(String photoPublicId) {
+		this.photoPublicId = photoPublicId;
 	}
 
 
