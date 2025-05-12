@@ -66,8 +66,43 @@ public class ArticleService {
 			List <ArticleDto> listResult = list.stream().map(article -> new ArticleDto(article)).toList();
 			
 			return ResponseEntity.status(HttpStatus.OK).body(listResult);
-		}
-		
+		}	
+	}
+	
+	// Búsqueda de artículos por título
+	public ResponseEntity<?> searchArticlesByTitle(String title) {
+	    List<Article> list = null;
+
+	    if (title == null || title.trim().isEmpty()) {
+	        Map<String, String> response = new HashMap<>();
+	        response.put("error", "Parámetro inválido");
+	        response.put("message", "El término de búsqueda no puede estar vacío");
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+	    }
+	    
+	    try {
+	        list = articleRepository.findByTitleContainingIgnoreCase(title);
+	        
+	    } catch (Exception e) {
+	        Map<String, String> response = new HashMap<>();
+	        response.put("error", "Error en la base de datos");
+	        response.put("message", e.getMessage());
+	        
+	        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(response);
+	    }
+	    
+	    if (list.isEmpty()) {
+	        Map<String, String> response = new HashMap<>();
+	        response.put("errorMessage", "No se encontraron artículos con: '" + title + "'");
+	        
+	        return ResponseEntity.status(210).body(response);
+	    } else {
+	        List<ArticleDto> listResult = list.stream()
+	            .map(article -> new ArticleDto(article))
+	            .toList();
+	        
+	        return ResponseEntity.status(HttpStatus.OK).body(listResult);
+	    }
 	}
 	
 	// Obtener artículo por id

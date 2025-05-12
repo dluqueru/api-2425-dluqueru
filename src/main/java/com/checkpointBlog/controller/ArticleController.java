@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.checkpointBlog.exception.ElementNotFoundException;
@@ -57,6 +58,28 @@ public class ArticleController {
 		} else {
 			return a;
 		}
+	}
+	
+	// Búsqueda de artículos
+	@GetMapping("/article/search")
+	@Operation(
+	    summary = "Buscar artículos por título", 
+	    description = "Devuelve una lista de artículos cuyo título contiene el texto buscado (no sensible a mayúsculas/minúsculas)"
+	)
+	@ApiResponses({
+	    @ApiResponse(responseCode = "200", description = "Búsqueda realizada con éxito"),
+	    @ApiResponse(responseCode = "400", description = "Parámetro de búsqueda vacío"),
+	    @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+	})
+	public ResponseEntity<?> searchArticlesByTitle(
+	    @Parameter(
+	        description = "Texto a buscar en los títulos de los artículos", 
+	        example = "zelda", 
+	        required = true
+	    )
+	    @RequestParam String title) {
+	    
+	    return articleService.searchArticlesByTitle(title);
 	}
 	
 	// Añadir un artículo
