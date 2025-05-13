@@ -1,6 +1,7 @@
 package com.checkpointBlog.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -67,11 +68,14 @@ public class Article {
     
     @OneToMany(mappedBy="article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArticleCategory> articleCategories;
+    
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes = new ArrayList<>();
 
     public Article() {
         super();
         this.publishDate = LocalDateTime.now();
-        this.views = 0; // Se inicializa las vistas en 0
+        this.views = 0;
     }
 
     public Integer getId() {
@@ -148,6 +152,10 @@ public class Article {
 	
     public void incrementViews() {
         this.views++;
+    }
+    
+    public List<Like> getLikes() {
+        return likes;
     }
 
 	@Override

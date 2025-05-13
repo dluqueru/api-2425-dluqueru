@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,8 +19,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.checkpointBlog.exception.NotFoundException;
+import com.checkpointBlog.model.Article;
+import com.checkpointBlog.model.ArticleDto;
 import com.checkpointBlog.model.User;
 import com.checkpointBlog.model.UserDto;
+import com.checkpointBlog.repository.LikeRepository;
 import com.checkpointBlog.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -29,6 +33,9 @@ public class UserService implements UserDetailsService{
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private LikeRepository likeRepository;
 	
 	@Autowired
 	private BCryptPasswordEncoder code;
@@ -266,4 +273,11 @@ public class UserService implements UserDetailsService{
 	    
 	    return ResponseEntity.ok(response);
 	}
+	
+	public List<ArticleDto> getLikedArticles(String username) {
+        List<Article> articles = likeRepository.findLikedArticlesByUsername(username);
+        return articles.stream()
+                .map(ArticleDto::new)
+                .collect(Collectors.toList());
+    }
 }
