@@ -31,14 +31,22 @@ public class ArticleController {
 	
 	// Lista de artículos
 	@GetMapping("/article")
-	@Operation(summary = "Obtener todos los artículos", description = "Devuelve una lista con todos los artículos presentes en la base de datos")
-	@ApiResponses({
-		 @ApiResponse(responseCode = "200", description = "Artículos encontrados"),
-		 @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-		})
-	public ResponseEntity<?> listArticles() {
-		return articleService.getArticles();
-	}
+    @Operation(summary = "Obtener artículos paginados", 
+              description = "Devuelve una lista paginada de artículos (4 por página)")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Artículos encontrados"),
+        @ApiResponse(responseCode = "204", description = "No hay más artículos"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public ResponseEntity<?> listArticles(
+            @Parameter(description = "Número de página (0-based)", example = "0")
+            @RequestParam(defaultValue = "0") int page,
+            
+            @Parameter(description = "Tamaño de la página", example = "4")
+            @RequestParam(defaultValue = "4") int size) {
+        
+        return articleService.getArticles(page, size);
+    }
 	
 	// Obtener artículo por id
 	@GetMapping("/article/{id}")
