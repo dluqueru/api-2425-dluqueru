@@ -73,6 +73,29 @@ public class ArticleService {
         }
     }
 	
+	// Lista de artículos reportados
+	public ResponseEntity<?> getReportedArticles() {
+	    try {
+	        List<Article> reportedArticles = articleRepository.findByReportedTrue();
+	        
+	        if (reportedArticles.isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	        }
+	        
+	        List<ArticleDto> result = reportedArticles.stream()
+	            .map(ArticleDto::new)
+	            .collect(Collectors.toList());
+	        
+	        return ResponseEntity.ok(result);
+	        
+	    } catch (Exception e) {
+	        Map<String, String> errorResponse = new HashMap<>();
+	        errorResponse.put("error", "Error en la base de datos");
+	        errorResponse.put("message", e.getMessage());
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+	    }
+	}
+	
 	// Búsqueda de artículos por título
 	public ResponseEntity<?> searchArticlesByTitle(String title) {
 	    List<Article> list = null;
@@ -328,6 +351,46 @@ public class ArticleService {
                 "error", "Error al eliminar el artículo",
                 "message", e.getMessage()
             ));
+        }
+    }
+    
+    // Reportar un artículo
+    @Transactional
+    public ResponseEntity<?> reportArticle(Integer id) {
+        try {
+            Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Artículo no encontrado"));
+            
+            article.setReported(true);
+            Article updatedArticle = articleRepository.save(article);
+            
+            return ResponseEntity.ok(new ArticleDto(updatedArticle));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Error al reportar el artículo"));
+        }
+    }
+
+    // Desreportar un artículo
+    @Transactional
+    public ResponseEntity<?> unreportArticle(Integer id) {
+        try {
+            Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Artículo no encontrado"));
+            
+            article.setReported(false);
+            Article updatedArticle = articleRepository.save(article);
+            
+            return ResponseEntity.ok(new ArticleDto(updatedArticle));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Error al desreportar el artículo"));
         }
     }
 }

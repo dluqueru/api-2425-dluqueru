@@ -48,6 +48,20 @@ public class ArticleController {
         return articleService.getArticles(page, size);
     }
 	
+	// Lista de artículos reportados
+	@GetMapping("/article/reported")
+	@Operation(summary = "Obtener artículos reportados", 
+	          description = "Devuelve todos los artículos reportados (requiere rol ADMIN)")
+	@ApiResponses({
+	    @ApiResponse(responseCode = "200", description = "Artículos reportados encontrados"),
+	    @ApiResponse(responseCode = "204", description = "No hay artículos reportados"),
+	    @ApiResponse(responseCode = "403", description = "No tienes permisos para esta acción"),
+	    @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+	})
+	public ResponseEntity<?> getReportedArticles() {
+	    return articleService.getReportedArticles();
+	}
+	
 	// Obtener artículo por id
 	@GetMapping("/article/{id}")
 	@Operation(summary = "Obtener artículo por ID", description = "Devuelve un artículo basado en su ID")
@@ -153,4 +167,34 @@ public class ArticleController {
         return articleService.deleteArticle(id);
     }
 	
+    // Reportar un artículo
+    @PutMapping("/article/{id}/report")
+    @Operation(summary = "Reportar un artículo", 
+              description = "Marca un artículo como reportado")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Artículo reportado exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Artículo no encontrado"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public ResponseEntity<?> reportArticle(
+        @Parameter(description = "ID del artículo a reportar", required = true)
+        @PathVariable Integer id) {
+        return articleService.reportArticle(id);
+    }
+
+    // Desreportar un artículo
+    @PutMapping("/article/{id}/unreport")
+    @Operation(summary = "Desreportar un artículo", 
+              description = "Quita el reporte de un artículo (requiere rol ADMIN)")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Artículo desreportado exitosamente"),
+        @ApiResponse(responseCode = "403", description = "No tienes permisos para esta acción"),
+        @ApiResponse(responseCode = "404", description = "Artículo no encontrado"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public ResponseEntity<?> unreportArticle(
+        @Parameter(description = "ID del artículo a desreportar", required = true)
+        @PathVariable Integer id) {
+        return articleService.unreportArticle(id);
+    }
 }
