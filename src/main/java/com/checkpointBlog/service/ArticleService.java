@@ -166,6 +166,18 @@ public class ArticleService {
 	
 	// Añadir un nuevo artículo
 	public ResponseEntity<?> addArticle(Article article) {
+		// Se verifica que el usuario logueado coincide con el usuario del artículo
+	    String loggedUsername = userService.getLoggedUsername();
+	    User articleUser = article.getUser();
+
+	    // Verificar coincidencia de usuario O permisos de admin
+	    if (!loggedUsername.equals(articleUser.getUsername())) {
+	        if (!userService.hasAdminRole()) {
+	            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+	                    .body(Map.of("error", "No tienes permisos para esta acción"));
+	        }
+	    }
+		
 	    // Se verifica que el artículo no esté vacío
 	    if (article.getTitle() == null || article.getBody() == null) {
 	    	Map<String, String> response = new HashMap<>();
