@@ -59,7 +59,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(requests -> requests
                 .requestMatchers("/login", "/register", "/article/search**", "/user", "/user/**", "/images/**", "/api/**", "/category", "/category/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/article").permitAll()
-                .requestMatchers(HttpMethod.POST, "/article").authenticated()
+                .requestMatchers(HttpMethod.POST, "/article").hasAnyAuthority("ADMIN", "EDITOR")
                 .requestMatchers("/article/**", "/likes/**", "/article/*/report").authenticated()
                 .requestMatchers("/article/*/unreport", "/article/reported").hasRole("ADMIN")
                 .anyRequest().denyAll()
