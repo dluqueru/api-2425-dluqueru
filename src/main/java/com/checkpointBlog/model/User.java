@@ -45,6 +45,9 @@ public class User implements UserDetails{
 	@Enumerated(EnumType.STRING)
 	@Column(name="role")
 	private Role role;
+	
+	@Column(name="reputation")
+	private int reputation;
 
 	public User() {
 		super();
@@ -105,6 +108,30 @@ public class User implements UserDetails{
 
 	public void setRole(Role role) {
 		this.role = role;
+	}
+
+	public int getReputation() {
+		return reputation;
+	}
+
+	public void setReputation(int reputation) {
+		this.reputation = reputation;
+	}
+	
+	public void likeIncrementReputation() {
+		this.reputation++;
+	}
+	
+	public void dislikeDecrementReputation() {
+		this.reputation--;
+	}
+	
+	public void createArticleIncrementReputation() {
+		this.reputation+=5;
+	}
+	
+	public boolean canCreateArticle() {
+	    return this.reputation >= 5;
 	}
 
 	@Override

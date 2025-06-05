@@ -21,6 +21,8 @@ import com.checkpointBlog.repository.ArticleCategoryRepository;
 import com.checkpointBlog.repository.ArticleRepository;
 import com.checkpointBlog.repository.CategoryRepository;
 import com.checkpointBlog.repository.UserRepository;
+import com.checkpointBlog.service.UserService.ReputationAction;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -169,8 +171,14 @@ public class ArticleService {
 		// Se verifica que el usuario logueado coincide con el usuario del artículo
 	    String loggedUsername = userService.getLoggedUsername();
 	    User articleUser = article.getUser();
+	    
+	    // Se verifica que la reputación del usuario sea suficiente para crear artículo
+	    if (!userRepository.findByUsername(loggedUsername).get().canCreateArticle()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Necesitas al menos 5 puntos de reputación para crear artículos"));
+	    }
 
-	    // Verificar coincidencia de usuario O permisos de admin
+	    // Se verifica coincidencia de usuario O permisos de admin
 	    if (!loggedUsername.equals(articleUser.getUsername())) {
 	        if (!userService.hasAdminRole()) {
 	            return ResponseEntity.status(HttpStatus.FORBIDDEN)
@@ -239,6 +247,9 @@ public class ArticleService {
 
 	        // Se guardan las relaciones artículo-categoría en la tabla intermedia
 	        articleCategoryRepository.saveAll(articleCategories);
+	        
+	        // Se incrementa el contador de reputación
+	        userService.handleReputationAction(article.getUser().getUsername(), ReputationAction.ARTICLE_CREATE);
 
 	        return ResponseEntity.status(HttpStatus.CREATED)
 	                .body(new ArticleDto(savedArticle));

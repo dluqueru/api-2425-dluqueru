@@ -20,4 +20,6 @@ public interface LikeRepository extends JpaRepository<Like, Integer> {
     
     @Query("SELECT a FROM Like l JOIN l.article a WHERE l.user.username = :username ORDER BY l.createdAt DESC")
     List<Article> findLikedArticlesByUsername(@Param("username") String username);
+
+	long countByUserUsernameAndArticleId(String username, Integer articleId);
 }

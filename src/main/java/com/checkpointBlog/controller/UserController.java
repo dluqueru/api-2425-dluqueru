@@ -147,7 +147,8 @@ public class UserController {
 	            savedUser.getName(),
 	            savedUser.getEmail(), 
 	            savedUser.getPhoto(), 
-	            savedUser.getRole()
+	            savedUser.getRole(),
+	            savedUser.getReputation()
 	        );
 
 	        return ResponseEntity.ok(responseUser);

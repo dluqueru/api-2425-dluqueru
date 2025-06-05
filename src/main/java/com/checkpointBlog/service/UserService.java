@@ -203,7 +203,8 @@ public class UserService implements UserDetailsService{
                     existingUser.getName(), 
                     existingUser.getEmail(), 
                     existingUser.getPhoto(),
-                    existingUser.getRole()
+                    existingUser.getRole(),
+                    existingUser.getReputation()
             );
             return ResponseEntity.ok(responseUser);
         } catch (Exception e) {
@@ -280,4 +281,29 @@ public class UserService implements UserDetailsService{
                 .map(ArticleDto::new)
                 .collect(Collectors.toList());
     }
+
+	public void handleReputationAction(String username, ReputationAction action) {
+	    User user = userRepository.findById(username)
+	        .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+	    
+	    switch(action) {
+	        case ARTICLE_LIKE:
+	            user.likeIncrementReputation();
+	            break;
+	        case ARTICLE_DISLIKE:
+	            user.dislikeDecrementReputation();
+	            break;
+	        case ARTICLE_CREATE:
+	            user.createArticleIncrementReputation();
+	            break;
+	    }
+	    
+	    userRepository.save(user);
+	}
+
+	public enum ReputationAction {
+	    ARTICLE_LIKE,
+	    ARTICLE_DISLIKE,
+	    ARTICLE_CREATE
+	}
 }

@@ -5,6 +5,9 @@ import com.checkpointBlog.model.LikeDto;
 import com.checkpointBlog.model.User;
 import com.checkpointBlog.model.Article;
 import com.checkpointBlog.repository.LikeRepository;
+import com.checkpointBlog.service.UserService.ReputationAction;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +18,9 @@ import java.util.Optional;
 public class LikeService {
 
     private final LikeRepository likeRepository;
+    
+    @Autowired
+	private UserService userService;
 
     public LikeService(LikeRepository likeRepository) {
         this.likeRepository = likeRepository;
@@ -26,6 +32,9 @@ public class LikeService {
         
         if (existingLike.isPresent()) {
             likeRepository.delete(existingLike.get());
+            
+            // Se decrementa el contador de reputación
+	        userService.handleReputationAction(username, ReputationAction.ARTICLE_DISLIKE);
             return null;
         } else {
             User user = new User();
@@ -40,6 +49,10 @@ public class LikeService {
             newLike.setCreatedAt(LocalDateTime.now());
             
             Like savedLike = likeRepository.save(newLike);
+            
+            // Se incrementa el contador de reputación
+	        userService.handleReputationAction(username, ReputationAction.ARTICLE_LIKE);
+	        
             return convertToDto(savedLike);
         }
     }

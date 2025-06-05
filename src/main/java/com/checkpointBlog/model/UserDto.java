@@ -6,8 +6,9 @@ public class UserDto {
     private String email;
     private String photo;
     private Role role;
+    private int reputation;
 
-    public UserDto(String username, String name, String email, String photo, Role role) {
+    public UserDto(String username, String name, String email, String photo, Role role, int reputation) {
         this.username = username;
         this.name = name;
         this.email = email;
@@ -21,6 +22,7 @@ public class UserDto {
         this.email = user.getEmail();
         this.photo = user.getPhoto();
         this.role = user.getRole();
+        this.reputation = user.getReputation();
     }
 
 	public String getUsername() {
@@ -62,4 +64,12 @@ public class UserDto {
     public void setRole(Role role) {
         this.role = role;
     }
+
+	public int getReputation() {
+		return reputation;
+	}
+
+	public void setReputation(int reputation) {
+		this.reputation = reputation;
+	}
 }
