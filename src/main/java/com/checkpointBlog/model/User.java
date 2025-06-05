@@ -120,10 +120,16 @@ public class User implements UserDetails{
 	
 	public void likeIncrementReputation() {
 		this.reputation++;
+		if(this.getRole() == Role.READER && this.reputation == 5) {
+			this.setRole(Role.EDITOR);
+		}
 	}
 	
 	public void dislikeDecrementReputation() {
 		this.reputation--;
+		if(this.getRole() == Role.EDITOR && this.reputation < 5) {
+			this.setRole(Role.READER);
+		}
 	}
 	
 	public void createArticleIncrementReputation() {
