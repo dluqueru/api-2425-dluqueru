@@ -104,6 +104,22 @@ public class ArticleController {
 	    return articleService.searchArticlesByTitle(title);
 	}
 	
+	// Artículos en estado borrador del usuario logueado
+	@GetMapping("/article/drafts")
+	@Operation(
+	    summary = "Obtener artículos en borrador del usuario logueado",
+	    description = "Devuelve una lista de artículos en estado DRAFT pertenecientes al usuario actual"
+	)
+	@ApiResponses({
+	    @ApiResponse(responseCode = "200", description = "Borradores encontrados"),
+	    @ApiResponse(responseCode = "204", description = "No hay borradores"),
+	    @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
+	    @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+	})
+	public ResponseEntity<?> getDraftArticles() {
+	    return articleService.getDraftArticles();
+	}
+	
 	// Añadir un artículo
 //	FORMATO PARA AÑADIR
 //	{

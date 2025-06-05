@@ -16,6 +16,7 @@ import com.checkpointBlog.model.Article;
 import com.checkpointBlog.model.ArticleCategory;
 import com.checkpointBlog.model.ArticleDto;
 import com.checkpointBlog.model.Category;
+import com.checkpointBlog.model.State;
 import com.checkpointBlog.model.User;
 import com.checkpointBlog.repository.ArticleCategoryRepository;
 import com.checkpointBlog.repository.ArticleRepository;
@@ -134,6 +135,31 @@ public class ArticleService {
 	    }
 	}
 	
+	// Lista de artículos por usuario en estado borrador
+	public ResponseEntity<?> getDraftArticles() {
+	    try {
+	        String loggedUsername = userService.getLoggedUsername();
+	        List<Article> draftArticles = articleRepository.findByStateAndUserUsername(State.DRAFT, loggedUsername);
+	        
+	        if (draftArticles.isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.NO_CONTENT)
+	                .body(Map.of("message", "No tienes artículos en borrador"));
+	        }
+
+	        List<ArticleDto> result = draftArticles.stream()
+	            .map(ArticleDto::new)
+	            .toList();
+	        
+	        return ResponseEntity.ok(result);
+	        
+	    } catch (Exception e) {
+	        Map<String, String> errorResponse = new HashMap<>();
+	        errorResponse.put("error", "Error al obtener los borradores");
+	        errorResponse.put("message", e.getMessage());
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+	    }
+	}
+	
 	// Obtener artículo por id
 	public ResponseEntity<?> getArticle (Integer id) {
 		Article a;
@@ -156,8 +182,10 @@ public class ArticleService {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 		}
 		
-		// Se incrementan las views cada vez que se accede al artículo
-		a.incrementViews();
+		// Se incrementan las views cada vez que se accede al artículo si el estado es DEFINITIVE
+		if(a.getState().equals(State.DEFINITIVE)) {
+			a.incrementViews();
+		}
         articleRepository.save(a);
 		
 		ArticleDto res = new ArticleDto(a);
