@@ -50,31 +50,31 @@ public class ArticleService {
 	
 	// Lista de artículos
 	public ResponseEntity<?> getArticles(int page, int size) {
-        try {
-            Pageable pageable = PageRequest.of(page, size);
-            Page<Article> articlePage = articleRepository.findAll(pageable);
-            
-            if (articlePage.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-            }
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("articles", articlePage.getContent()
-                                    .stream()
-                                    .map(ArticleDto::new)
-                                    .toList());
-            response.put("currentPage", articlePage.getNumber());
-            response.put("hasNext", articlePage.hasNext());
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", "Error en la base de datos");
-            errorResponse.put("message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
-    }
+	    try {
+	        Pageable pageable = PageRequest.of(page, size);
+	        Page<Article> articlePage = articleRepository.findPublishedOrderByUserReputationDesc(pageable);
+	        
+	        if (articlePage.isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	        }
+	        
+	        Map<String, Object> response = new HashMap<>();
+	        response.put("articles", articlePage.getContent()
+	                                .stream()
+	                                .map(ArticleDto::new)
+	                                .toList());
+	        response.put("currentPage", articlePage.getNumber());
+	        response.put("hasNext", articlePage.hasNext());
+	        
+	        return ResponseEntity.ok(response);
+	        
+	    } catch (Exception e) {
+	        Map<String, String> errorResponse = new HashMap<>();
+	        errorResponse.put("error", "Error en la base de datos");
+	        errorResponse.put("message", e.getMessage());
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+	    }
+	}
 	
 	// Lista de artículos reportados
 	public ResponseEntity<?> getReportedArticles() {
