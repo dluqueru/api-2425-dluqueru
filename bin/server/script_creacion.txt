@@ -5,7 +5,17 @@ CREATE TABLE User (
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     image_url VARCHAR(255),
-    role ENUM('editor', 'reader', 'admin') NOT NULL
+    role ENUM('EDITOR', 'READER', 'ADMIN') NOT NULL,
+    reputation INT DEFAULT 0
+);
+
+-- Tabla de suscripciones entre usuarios (N:M)
+CREATE TABLE User_Subscription (
+    subscriber VARCHAR(50),
+    subscribed_to VARCHAR(50),
+    PRIMARY KEY (subscriber, subscribed_to),
+    FOREIGN KEY (subscriber) REFERENCES User(username) ON DELETE CASCADE,
+    FOREIGN KEY (subscribed_to) REFERENCES User(username) ON DELETE CASCADE
 );
 
 -- Tabla Article
@@ -14,7 +24,7 @@ CREATE TABLE Article (
     title VARCHAR(255) NOT NULL,
     body TEXT NOT NULL,
     reported BOOLEAN DEFAULT FALSE,
-    state ENUM('draft', 'definitive') NOT NULL DEFAULT 'draft',
+    state ENUM('DRAFT', 'DEFINITIVE') NOT NULL DEFAULT 'DRAFT',
     publish_date DATETIME DEFAULT NULL,
     views INT DEFAULT 0,
     username VARCHAR(50) NOT NULL,
@@ -46,3 +56,61 @@ CREATE TABLE User_Category (
     FOREIGN KEY (category_id) REFERENCES Category(id) ON DELETE CASCADE
 );
 
+-- Tabla Comment
+CREATE TABLE Comment (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    comment TEXT NOT NULL,
+    article_id INT NOT NULL,
+    user_id VARCHAR(50) NOT NULL,
+    creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    reported BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (article_id) REFERENCES Article(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES User(username) ON DELETE CASCADE
+);
+
+-- Tabla Image
+CREATE TABLE `Image` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `image_url` VARCHAR(512) NOT NULL,
+  `public_id` VARCHAR(255) NOT NULL,
+  `asset_id` VARCHAR(255) ,
+  `format` VARCHAR(10) ,
+  `article_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_IMAGE_PUBLIC_ID` (`public_id`),
+  CONSTRAINT `FK_IMAGE_ARTICLE` 
+    FOREIGN KEY (`article_id`) 
+    REFERENCES `Article` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Índices para mejorar el rendimiento de consultas comunes
+CREATE INDEX `IDX_IMAGE_ARTICLE` ON `Image` (`article_id`);
+CREATE INDEX `IDX_IMAGE_FORMAT` ON `Image` (`format`);
+
+-- Tabla Tag
+CREATE TABLE Tag (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tag VARCHAR(50) UNIQUE NOT NULL
+);
+
+-- Tabla intermedia para la relación N:M entre Article y Tag
+CREATE TABLE Article_Tag (
+    article_id INT,
+    tag_id INT,
+    PRIMARY KEY (article_id, tag_id),
+    FOREIGN KEY (article_id) REFERENCES Article(id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES Tag(id) ON DELETE CASCADE
+);
+
+-- Tabla intermedia para "me gusta"
+CREATE TABLE Likes (
+  id            INT PRIMARY KEY AUTO_INCREMENT,
+  user_username VARCHAR(255) NOT NULL,
+  article_id    INT NOT NULL,
+  created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(user_username, article_id),
+  FOREIGN KEY (user_username) REFERENCES User(username),
+  FOREIGN KEY (article_id) REFERENCES Article(id)
+);
