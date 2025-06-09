@@ -159,6 +159,98 @@ public class ArticleService {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
 	    }
 	}
+
+	// Lista de artículos DEFINITIVE filtrados por categoría y ordenados
+	public ResponseEntity<?> getDefinitiveArticlesByCategoryAndSort(
+	        Integer categoryId, 
+	        String sortBy, 
+	        String sortDirection) {
+	    
+	    try {
+	        List<Article> articles;
+	        
+	        switch (sortBy.toLowerCase()) {
+	            case "date":
+	                if ("asc".equalsIgnoreCase(sortDirection)) {
+	                    articles = articleRepository.findDefinitiveByCategoryOrderByPublishDateAsc(categoryId);
+	                } else {
+	                    articles = articleRepository.findDefinitiveByCategoryOrderByPublishDateDesc(categoryId);
+	                }
+	                break;
+	                
+	            case "views":
+	                if ("asc".equalsIgnoreCase(sortDirection)) {
+	                    articles = articleRepository.findDefinitiveByCategoryOrderByViewsAsc(categoryId);
+	                } else {
+	                    articles = articleRepository.findDefinitiveByCategoryOrderByViewsDesc(categoryId);
+	                }
+	                break;
+	                
+	            default:
+	                articles = articleRepository.findDefinitiveByCategoryOrderByPublishDateDesc(categoryId);
+	        }
+	        
+	        if (articles.isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	        }
+	        
+	        List<ArticleDto> result = articles.stream()
+	            .map(ArticleDto::new)
+	            .toList();
+	        
+	        return ResponseEntity.ok(result);
+	        
+	    } catch (Exception e) {
+	        Map<String, String> errorResponse = new HashMap<>();
+	        errorResponse.put("error", "Error al obtener artículos");
+	        errorResponse.put("message", e.getMessage());
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+	    }
+	}
+
+	// Lista de artículos DEFINITIVE ordenados sin filtrar
+	public ResponseEntity<?> getDefinitiveArticlesSorted(String sortBy, String sortDirection) {
+	    try {
+	        List<Article> articles;
+	        
+	        switch (sortBy.toLowerCase()) {
+	            case "date":
+	                if ("asc".equalsIgnoreCase(sortDirection)) {
+	                    articles = articleRepository.findDefinitiveOrderByPublishDateAsc();
+	                } else {
+	                    articles = articleRepository.findDefinitiveOrderByPublishDateDesc();
+	                }
+	                break;
+	                
+	            case "views":
+	                if ("asc".equalsIgnoreCase(sortDirection)) {
+	                    articles = articleRepository.findDefinitiveOrderByViewsAsc();
+	                } else {
+	                    articles = articleRepository.findDefinitiveOrderByViewsDesc();
+	                }
+	                break;
+	                
+	            default:
+	                articles = articleRepository.findDefinitiveOrderByPublishDateDesc();
+	        }
+	        
+	        if (articles.isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	        }
+	        
+	        List<ArticleDto> result = articles.stream()
+	            .map(ArticleDto::new)
+	            .toList();
+	        
+	        return ResponseEntity.ok(result);
+	        
+	    } catch (Exception e) {
+	        Map<String, String> errorResponse = new HashMap<>();
+	        errorResponse.put("error", "Error al obtener artículos");
+	        errorResponse.put("message", e.getMessage());
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+	    }
+	}
 	
 	// Obtener artículo por id
 	public ResponseEntity<?> getArticle (Integer id) {

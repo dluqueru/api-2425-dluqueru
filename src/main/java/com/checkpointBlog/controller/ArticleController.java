@@ -29,7 +29,7 @@ public class ArticleController {
 	@Autowired
 	private ArticleService articleService;
 	
-	// Lista de artículos
+	// Lista de artículos ordenados por la reputación de su autor y por fecha de creación
 	@GetMapping("/article")
     @Operation(summary = "Obtener artículos paginados", 
               description = "Devuelve una lista paginada de artículos (4 por página)")
@@ -60,6 +60,53 @@ public class ArticleController {
 	})
 	public ResponseEntity<?> getReportedArticles() {
 	    return articleService.getReportedArticles();
+	}
+
+	// Lista de artículos por categoría y orden
+	@GetMapping("/article/category/{categoryId}")
+	@Operation(
+	    summary = "Obtener artículos por categoría y orden",
+	    description = "Devuelve artículos DEFINITIVE filtrados por categoría, ordenados por fecha o vistas"
+	)
+	@ApiResponses({
+	    @ApiResponse(responseCode = "200", description = "Artículos encontrados"),
+	    @ApiResponse(responseCode = "204", description = "No hay artículos"),
+	    @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+	})
+	public ResponseEntity<?> getArticlesByCategoryAndSort(
+	    @Parameter(description = "ID de la categoría", required = true)
+	    @PathVariable Integer categoryId,
+	    
+	    @Parameter(description = "Campo para ordenar (date|views)", example = "date")
+	    @RequestParam(defaultValue = "date") String sortBy,
+	    
+	    @Parameter(description = "Dirección de orden (asc|desc)", example = "desc")
+	    @RequestParam(defaultValue = "desc") String sortDirection) {
+	    
+	    return articleService.getDefinitiveArticlesByCategoryAndSort(
+	        categoryId, sortBy, sortDirection
+	    );
+	}
+
+	// Lista de artículos ordenados
+	@GetMapping("/article/sorted")
+	@Operation(
+	    summary = "Obtener artículos ordenados",
+	    description = "Devuelve artículos DEFINITIVE ordenados por fecha o vistas"
+	)
+	@ApiResponses({
+	    @ApiResponse(responseCode = "200", description = "Artículos encontrados"),
+	    @ApiResponse(responseCode = "204", description = "No hay artículos"),
+	    @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+	})
+	public ResponseEntity<?> getArticlesSorted(
+	    @Parameter(description = "Campo para ordenar (date|views)", example = "date")
+	    @RequestParam(defaultValue = "date") String sortBy,
+	    
+	    @Parameter(description = "Dirección de orden (asc|desc)", example = "desc")
+	    @RequestParam(defaultValue = "desc") String sortDirection) {
+	    
+	    return articleService.getDefinitiveArticlesSorted(sortBy, sortDirection);
 	}
 	
 	// Obtener artículo por id
