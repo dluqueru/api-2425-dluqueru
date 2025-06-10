@@ -56,8 +56,20 @@ public class SecurityConfig {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(requests -> requests
-                .requestMatchers("/login", "/register", "/article/search**", "/article/category/**", "/article/sorted**", "/user", "/user/**", "/images/**", "/api/**", "/category", "/category/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/article").permitAll()
+        	    .requestMatchers(HttpMethod.POST, "/login", "/register").permitAll()
+        	    .requestMatchers(HttpMethod.GET, 
+        	        "/article", 
+        	        "/article/search/**", 
+        	        "/article/category/**", 
+        	        "/article/sorted/**",
+        	        "/user",
+        	        "/user/**",
+        	        "/images/**",
+        	        "/api/**",
+        	        "/category",
+        	        "/category/**",
+        	        "/swagger-ui/**",
+        	        "/v3/api-docs/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/article").hasAnyAuthority("ADMIN", "EDITOR")
                 .requestMatchers(HttpMethod.PUT, "/article/**").hasAnyAuthority("ADMIN", "EDITOR")
                 .requestMatchers(HttpMethod.DELETE, "/article/**").hasAnyAuthority("ADMIN", "EDITOR")
