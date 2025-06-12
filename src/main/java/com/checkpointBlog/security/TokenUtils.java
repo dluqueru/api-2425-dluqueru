@@ -21,9 +21,8 @@ public class TokenUtils {
 	// Se crea la semilla
 	private final static String ACCESS_TOKEN_SECRET="maripilisímaripilinomaripilisímaripilino";
 	
-	// Tiempo en segundos 4 minutos
-	// SOLO RECOMENDABLE MIENTRAS DESARROLLAMOS
-	private final static Long ACCESS_TOKEN_LIFE_TIME=(long) (10*24*60*60*1000);
+	// Tiempo en segundos 2 horas
+	private final static Long ACCESS_TOKEN_LIFE_TIME=(long) (2*60*60*1000);
 	
 	public static String generateToken(String username, String email, Role role) {
 		Date expirationDate = new Date(System.currentTimeMillis() + ACCESS_TOKEN_LIFE_TIME);
