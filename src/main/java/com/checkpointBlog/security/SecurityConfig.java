@@ -70,10 +70,10 @@ public class SecurityConfig {
         	        "/category/**",
         	        "/swagger-ui/**",
         	        "/v3/api-docs/**").permitAll()
+        	    .requestMatchers("/article/**", "/likes/**", "/article/*/report", "/article/drafts").authenticated()
                 .requestMatchers(HttpMethod.POST, "/article", "/api/images/upload/**").hasAnyAuthority("ADMIN", "EDITOR")
                 .requestMatchers(HttpMethod.PUT, "/article/**").hasAnyAuthority("ADMIN", "EDITOR")
                 .requestMatchers(HttpMethod.DELETE, "/article/**", "/api/images/**").hasAnyAuthority("ADMIN", "EDITOR")
-                .requestMatchers("/article/**", "/likes/**", "/article/*/report", "/article/drafts").authenticated()
                 .requestMatchers("/article/*/unreport", "/article/reported").hasRole("ADMIN")
                 .anyRequest().denyAll()
             )
